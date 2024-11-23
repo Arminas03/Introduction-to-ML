@@ -12,6 +12,7 @@ def load_data(path, split_percentage):
     i_split = int(split_percentage * len(data))
 
     x = data.drop(columns=['date', 'rv_lead_1', 'ticker']).values
+    # shape = (number of observations, # of timestamps to look back, number of features)
     x = x.reshape((x.shape[0], 1, x.shape[1]))
     y = data['rv_lead_1'].values
 
