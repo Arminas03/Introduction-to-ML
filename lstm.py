@@ -2,7 +2,7 @@ import os
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 import pandas as pd
 from sklearn.metrics import mean_squared_error
-from keras.api.callbacks import TensorBoard
+# from keras.api.callbacks import TensorBoard - could be useful
 from keras.api.models import Sequential
 from keras.api.layers import LSTM, Dense
 
