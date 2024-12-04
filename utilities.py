@@ -24,9 +24,9 @@ def plot_preds(y_test, y_pred):
     plt.plot(indexes, y_test, label='y_test', color='blue', marker='o')
     plt.plot(indexes, y_pred, label='y_pred', color='red', marker='x')
 
-    plt.xlabel('Index (or Time)')
+    plt.xlabel('Day')
     plt.ylabel('Value')
-    plt.title('Plotting Sequential Data on the Same Graph')
+    plt.title('Predictions vs True Values')
 
     plt.show()
 
