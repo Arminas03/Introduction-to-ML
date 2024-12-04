@@ -25,7 +25,7 @@ def plot_preds(y_test, y_pred):
     plt.plot(indexes, y_pred, label='y_pred', color='red', marker='x')
 
     plt.xlabel('Day')
-    plt.ylabel('Value')
+    plt.ylabel('rv_lead_1')
     plt.title('Predictions vs True Values')
 
     plt.show()
