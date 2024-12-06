@@ -17,4 +17,5 @@ def get_final_predictions(stock_name):
 
 
 if __name__ == "__main__":
-    get_final_predictions("MSFT")
+    for stock in ["MSFT", "GE", "AAPL", "BA", "JNJ"]:
+        get_final_predictions(stock)

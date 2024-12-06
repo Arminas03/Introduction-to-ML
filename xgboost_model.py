@@ -44,7 +44,7 @@ def _model_feature_selection(model):
 
 
 def get_predictions():
-    x_train, y_train, x_test, y_test = load_data("stock_data_train.csv", 0.8)
+    x_train, y_train, x_test, y_test = load_data("stock_data_train.csv", 1)
     n_study_trials = 100
 
     study = optuna.create_study(direction='minimize')
@@ -57,7 +57,9 @@ def get_predictions():
     tuned_model.fit(x_train, y_train)
 
     _model_feature_selection(tuned_model)
-    return test_model(tuned_model, x_test, y_test)
+
+    # For accuracy testing
+    # return test_model(tuned_model, x_test, y_test)
 
     
 if __name__ == "__main__":
