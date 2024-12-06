@@ -35,7 +35,7 @@ def _load_data_lstm(path, split_percentage, seq_length, stock_name=""):
     data = data[data['ticker'].str.strip().str.startswith(stock_name)]
     i_split = int(split_percentage * len(data))
 
-    selected_features = ['medrv_lag', 'rv_lag_1', 'vix_lag', 'rv_lag_5']
+    selected_features = ['medrv_lag', 'vix_lag', 'rv_minus_lag']
     x, y, y_scaler = _extract_and_transform_data(data, selected_features)
     x_seq, y_seq = _sequential_data(x, y, seq_length)
 
@@ -48,9 +48,7 @@ def _load_data_lstm(path, split_percentage, seq_length, stock_name=""):
 
 def _model_setup():
     return Sequential([
-        LSTM(32, return_sequences=True, activation="relu", use_bias=False),
-        LSTM(16, return_sequences=True, activation="relu", use_bias=False),
-        LSTM(8, activation="relu", use_bias=False),
+        LSTM(2),
         Dense(1)
     ])
 
@@ -66,13 +64,15 @@ def _test_model(model: Sequential, x_test, y_test, y_scaler: StandardScaler):
     y_pred = model.predict(x_test)
 
     y_test = y_scaler.inverse_transform(y_test)
-    y_pred = y_scaler.inverse_transform(y_pred)
+    y_pred = y_scaler.inverse_transform(y_pred).ravel()
 
     print(mean_squared_error(y_test, y_pred))
     plot_preds(y_test, y_pred)
 
+    return y_pred
 
-def main():
+
+def get_predictions():
     x_train, y_train, x_test, y_test, y_scaler = _load_data_lstm(
         'stock_data_train.csv', 0.8, seq_length = 1
     )
@@ -80,8 +80,8 @@ def main():
     model = _model_setup()
     _train_model(x_train, y_train, model)
 
-    _test_model(model, x_test, y_test, y_scaler)
+    return _test_model(model, x_test, y_test, y_scaler)
 
 
 if __name__ == '__main__':
-    main()
+    get_predictions()

@@ -20,12 +20,12 @@ def _xgb_model_setup(trial: Trial) -> XGBRegressor:
         n_estimators = trial.suggest_int('n_estimators', 200, 1000),
         learning_rate = trial.suggest_float('learning_rate', 0.01, 0.1),
         max_depth = trial.suggest_int('max_depth', 3, 10),
-        min_child_weight = trial.suggest_int('min_child_weight', 1, 15),
+        min_child_weight = trial.suggest_int('min_child_weight', 1, 10),
         subsample = trial.suggest_float('subsample', 0.6, 1),
         gamma = trial.suggest_float('gamma', 0, 5),
-        reg_lambda = trial.suggest_float('lambda', 0, 1),
-        reg_alpha = trial.suggest_float('alpha', 0, 1),
-        objective = 'reg:squarederror',
+        reg_lambda = trial.suggest_float('lambda', 0.2, 1),
+        reg_alpha = trial.suggest_float('alpha', 0.2, 1),
+        objective = 'reg:squarederror'
     )
 
 
@@ -43,7 +43,7 @@ def _model_feature_selection(model):
     plt.show()
 
 
-def main():
+def get_predictions():
     x_train, y_train, x_test, y_test = load_data("stock_data_train.csv", 0.8)
     n_study_trials = 100
 
@@ -57,8 +57,8 @@ def main():
     tuned_model.fit(x_train, y_train)
 
     _model_feature_selection(tuned_model)
-    test_model(tuned_model, x_test, y_test)
+    return test_model(tuned_model, x_test, y_test)
 
     
 if __name__ == "__main__":
-    main()
+    get_predictions()

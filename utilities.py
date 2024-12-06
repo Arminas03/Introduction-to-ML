@@ -11,6 +11,8 @@ def load_data(path, split_percentage, stock_name=""):
     data['ticker'] = OneHotEncoder(sparse_output=False).fit_transform(data[['ticker']])
 
     i_split = int(split_percentage * len(data))
+    # ['medrv_lag', 'rv_lag_1', 'vix_lag', 'rv_lag_5', 'rv_lag_22']
+    # ['rv_plus_lag', 'rv_minus_lag', 'rskew_lag', 'rkurt_lag']
     selected_features = ['medrv_lag', 'rv_lag_1', 'vix_lag', 'rv_lag_5']
 
     x = data[selected_features]
@@ -36,3 +38,5 @@ def test_model(model, x_test, y_test):
 
     print(f"MSE = {mean_squared_error(y_test, y_pred)}")
     plot_preds(y_test, y_pred)
+
+    return y_pred
