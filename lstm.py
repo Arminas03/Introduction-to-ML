@@ -10,13 +10,13 @@ from sklearn.preprocessing import StandardScaler
 from utilities import plot_preds
 
 
-def _extract_and_transform_data(data: pd.DataFrame, selected_features: list):
+def _extract_and_transform_data(x: pd.DataFrame, y: pd.DataFrame, selected_features: list):
     x_scaler = StandardScaler()
     y_scaler = StandardScaler()
 
     return (
-        x_scaler.fit_transform(data[selected_features].values),
-        y_scaler.fit_transform(data[['rv_lead_1']].values),
+        x_scaler.fit_transform(x[selected_features].values),
+        y_scaler.fit_transform(y.values),
         y_scaler
     )
 
@@ -34,14 +34,24 @@ def _load_data_lstm(path, split_percentage, seq_length, stock_name=""):
     data = data[data['ticker'].str.strip().str.startswith(stock_name)]
     i_split = int(split_percentage * len(data))
 
+    x = data.drop(columns = ['rv_lead_1'])
+    y = data[['rv_lead_1']]
+
     selected_features = ['medrv_lag', 'vix_lag', 'rv_minus_lag']
-    x, y, y_scaler = _extract_and_transform_data(data, selected_features)
-    x_seq, y_seq = _sequential_data(x, y, seq_length)
+    x_train, y_train, x_test, y_test = (
+        x[:i_split], y[:i_split], x[i_split:], y[i_split:]
+    )
+    
+    x_train, y_train, _ = _extract_and_transform_data(x_train, y_train, selected_features)
+    x_test, y_test, y_scaler_test = _extract_and_transform_data(x_test, y_test, selected_features)
+    
+    x_seq_train, y_seq_train = _sequential_data(x_train, y_train, seq_length)
+    x_seq_test, y_seq_test = _sequential_data(x_test, y_test, seq_length)
 
     return (
-        x_seq[:i_split], y_seq[:i_split],
-        x_seq[i_split:], y_seq[i_split:],
-        y_scaler
+        x_seq_train, y_seq_train,
+        x_seq_test, y_seq_test,
+        y_scaler_test
     )
 
 
@@ -116,14 +126,14 @@ def grid_search():
 
 
 def get_predictions():
-    x_train, y_train, x_test, y_test, y_scaler = _load_data_lstm(
+    x_train, y_train, x_test, y_test, y_scaler_test = _load_data_lstm(
         'stock_data_train.csv', 0.8, seq_length = 1
     )
 
     model = _model_setup()
     _train_model(x_train, y_train, model)
 
-    return _test_model(model, x_test, y_test, y_scaler)
+    return _test_model(model, x_test, y_test, y_scaler_test)
 
 
 if __name__ == '__main__':
